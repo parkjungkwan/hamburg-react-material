@@ -7,10 +7,10 @@ import './App.css';
 /* import SignInSide from './sym/pages/SignInSide' */
 /* import Pricing from './uss/pages/Pricing' */
 /* import SiginUp from './uss/pages/StdnJoin' */
-import Home from './cmm/pages/Home'
+import { Main } from './tst/pages'
 export default function App() {
   return (
-    <Home/>
+    <Main/>
   )
 }
 
