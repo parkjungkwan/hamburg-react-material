@@ -13,7 +13,7 @@ export default function Main(){
             <Switch>
                 <Route exact path='/' component={Home}/>
                 <Route path='/about' component={About}/>
-                <Route path='/contact' component={Contacts}/>
+                <Route path='/contacts' component={Contacts}/>
                 <Route path='/events' component={Events}/>
                 <Route path='/products' component={Products}/>
                 <Route path='/events' component={Events}/>

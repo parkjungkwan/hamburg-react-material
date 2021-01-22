@@ -4,7 +4,7 @@ import { FaHome } from 'react-icons/fa'
 
 
 const selectedStyle = {
-    backgroundColor: 'white', color: 'slategray'
+    backgroundColor: 'white', color: 'red'
 }
 
 export default function MainMenu(){
@@ -13,6 +13,6 @@ export default function MainMenu(){
             <NavLink to={"/about"} activeStyle={selectedStyle}>[회사소개]</NavLink>
             <NavLink to={"/events"} activeStyle={selectedStyle}>[이벤트]</NavLink>
             <NavLink to={"/products"} activeStyle={selectedStyle}>[제품]</NavLink>
-            <NavLink to={"/contact"} activeStyle={selectedStyle}>[고객지원]</NavLink>
+            <NavLink to={"/contacts"}>[고객지원]</NavLink>
         </nav>)
 }

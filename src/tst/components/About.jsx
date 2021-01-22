@@ -1,7 +1,18 @@
 import React from 'react'
-import { PageTemplate } from './index'
-export default function About(){
+import { PageTemplate , AboutMenu} from './index'
+import { Company, History, Location, Services } from './aboutMenu/index'
+import { Route } from 'react-router-dom'
+export default function About({match}){
     return (<PageTemplate>
-        <section><h1>[회사소개]</h1></section>
+        <section>
+            <Route component={AboutMenu}/>
+            <Route exact path='/about' component={Company}/>
+            <Route path='/about/history' component={History}/>
+            <Route path='/about/location' component={Location}/>
+            <Route path='/about/service' component={Services}/>
+
+        </section>
         </PageTemplate>)
 }
+
+
