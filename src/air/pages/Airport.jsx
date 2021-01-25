@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
-import { filterProps } from 'recharts/types/util/types'
-import { SelectAllRounded } from '@material-ui/icons'
+import { debounce } from 'throttle-debounce'
+
 
 
 export const getAirports = data => ({type: "FETCH_AIRPORT", payload: data})
@@ -26,6 +26,43 @@ export default function Airport(){
     const [airports, setAirports] = useState([])
     const [selected, setSelected ] = useState(false)
     const [resultAvailable, setResult] = useState(false)
+    const [loading, setLoading] = useState(false)
+
+    useEffect(() =>{
+        if(!results.data) fetch()
+        else
+        if(results.data.length > 0) changeTitle()
+        if(airport.city !== undefined) changeTitle()
+    })
+    let fetch = () => dispatch(airportSearch())
+    let fetched = () => setLoading(false)
+    let changeTitle = () => document.title  = `공항검색결과: ${airport.airport}`
+    let searchAirports = debounce(500, input => {
+        let data = results.data
+        if(input.length < 0) alert(` Error `)
+        switch (input.length){
+            case 0: 
+            setAirports([])
+            setResult(false)
+            setSelected(false) 
+            break
+            case 1:
+                setAirports(data.filter(
+                    e => e.airport.charAt(0).toLowerCase() === input.toLowerCase()
+                || e.city.toLowerCase().includes(input.toLowerCase())
+                || e.icao.toLowerCase().includes(inputs.toLowerCase())))
+                setResult(true)
+                break
+            default:
+                setAirports(data.filter(
+                    e => e.airport.toLowerCase().includes(input.toLowerCase())
+                || e.city.toLowerCase().includes(input.toLowerCase())
+                || e.icao.toLowerCase().includes(inputs.toLowerCase())))
+                setResult(true)
+                break
+        }
+    })
+  
     return (<div>
 
     </div>)
