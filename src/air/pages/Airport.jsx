@@ -17,7 +17,7 @@ export const airportReducer = (state = [], action) => {
 export const airportSearch = () => dispatch => {
     axios.get(`https://raw.githubusercontent.com/mwgg/Airports/master/airports.json`)
     .then( response => {
-        dispatch(response.data)
+        dispatch(getAirports(response.data))
     }).catch(error => {throw error})
 }
 
