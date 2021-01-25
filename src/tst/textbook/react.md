@@ -73,4 +73,8 @@ const action - action
 pure function : param ok, return ok
 
 
+npm i -D throttle-debounce
+npm i -D react-redux redux
+
+
 

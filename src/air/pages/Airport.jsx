@@ -65,9 +65,24 @@ export default function Airport(){
                 break
         }
     })
-  
-    return (<div>
+
+    const handleInput = e => searchAirports( e.target.value )
+    return (<div style={{outline: 'none', border: 0}}>
         <h1>공항 검색창</h1>
+        
+            <div  style={{outline: 'none', border: 0}}>
+                <div style={{ width: '100%', display: 'block'}}>
+                    <input
+                        type = "text"
+                        style={{ width: '50%'}}
+                        placeholder = "공항이름, 코드번호, 도시명으로 검색가능합니다"
+                        className = "Search"
+                        onChange = { e => handleInput(e) }
+                    />
+                </div>    
+            </div>
+       
+      
     </div>)
 }
 
