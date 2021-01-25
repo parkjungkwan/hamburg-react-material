@@ -28,6 +28,9 @@ export default function Airport(){
     const [resultAvailable, setResult] = useState(false)
     const [loading, setLoading] = useState(false)
 
+    const results = useSelector(state => airportReducer)
+    const dispatch = useDispatch()
+
     useEffect(() =>{
         if(!results.data) fetch()
         else
@@ -50,21 +53,21 @@ export default function Airport(){
                 setAirports(data.filter(
                     e => e.airport.charAt(0).toLowerCase() === input.toLowerCase()
                 || e.city.toLowerCase().includes(input.toLowerCase())
-                || e.icao.toLowerCase().includes(inputs.toLowerCase())))
+                || e.icao.toLowerCase().includes(input.toLowerCase())))
                 setResult(true)
                 break
             default:
                 setAirports(data.filter(
                     e => e.airport.toLowerCase().includes(input.toLowerCase())
                 || e.city.toLowerCase().includes(input.toLowerCase())
-                || e.icao.toLowerCase().includes(inputs.toLowerCase())))
+                || e.icao.toLowerCase().includes(input.toLowerCase())))
                 setResult(true)
                 break
         }
     })
   
     return (<div>
-
+        <h1>공항 검색창</h1>
     </div>)
 }
 
