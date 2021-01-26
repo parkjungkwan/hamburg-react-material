@@ -4,20 +4,12 @@ import axios from 'axios'
 import { debounce } from 'throttle-debounce'
 
 
-export const getAirports = data => ({type: "FETCH_AIRPORT", payload: data})
-
-export const airportReducer = (state = [], action) => {
+export const setFlux = data => ({type: "FETCH_AIRPORT", payload: data})
+export const airportReducer = (state =  [], action) => {
     switch (action.type){
         case "FETCH_AIRPORT" : return action.payload
         default: return state
     }
-}
-
-export const airportSearch = () => dispatch => {
-    axios.get(`https://gist.githubusercontent.com/tdreyno/4278655/raw/7b0762c09b519f40397e4c3e100b097d861f5588/airports.json`)
-    .then( response => {
-        dispatch(getAirports(response.data))
-    }).catch(error => {throw error})
 }
 
 export default function Airport(){
@@ -26,23 +18,57 @@ export default function Airport(){
     const [selected, setSelected ] = useState(false)
     const [resultAvailable, setResult] = useState(false)
     const [loading, setLoading] = useState(false)
-
-    const results = useSelector(state => airportReducer)
+    const [search, setSearch] = useState('')
+    const handleInput = e => { 
+        e.preventDefault()
+        setSearch(e.target.value.trim().toLowerCase())
+    }    
+    const mySearch = e => {
+        e.preventDefault()
+        alert(`검색공항 ${search}`)
+        searchAirports(search)
+    }
+    const selectAirport = payload => {
+        setSelected(true)
+        setResult(false)
+        setAirport({airport: payload.name, city: payload.city, icao: payload.icao})
+    }
     const dispatch = useDispatch()
-
+    const getFlux =  useSelector(state => airportReducer)
     useEffect(() =>{
-        if(!results.data) fetch()
-        else
-        if(results.data.length > 0) changeTitle()
-        if(airport.city !== undefined) changeTitle()
-    })
-    let fetch = () => dispatch(airportSearch())
-    let fetched = () => setLoading(false)
-    let changeTitle = () => document.title  = `공항검색결과: ${airport.airport}`
+        if(!getFlux){
+            alert(`1`)
+            axios.get(`https://gist.githubusercontent.com/tdreyno/4278655/raw/7b0762c09b519f40397e4c3e100b097d861f5588/airports.json`)
+            .then( response => {
+                alert(`2 카운트:  ${response.data.length}`)
+                dispatch(setFlux(response.data))
+                alert(`3 카운트:  ${getFlux.length}`)
+            }).catch(error => {throw error})
+        }
+        else{
+            
+            if(getFlux.length > 0){
+                changeTitle()
+            }
+            if(airport.city !== undefined) {
+                alert(`airport.city !== undefined 인 상황`)
+                changeTitle()
+            }   
+        }
+        
+    },[])
+    
+    let changeTitle = () => document.title  = `공항검색결과:   ${airport.airport}`
     let searchAirports = debounce(500, input => {
-        alert(`searchAirports가 작동함, 입력한 값은  ${input}`)
-        let data = results.data
+        alert(`searchAirports에 전달된 검색어 ${input}`)
+
+        if(getFlux === undefined){
+            alert(`getFlux is undefined`)
+        }else{
+            alert(`getFlux is not undefined`)
+        }
         if(input.length < 0) alert(` Error `)
+        
         switch (input.length){
             case 0: 
             setAirports([])
@@ -50,14 +76,14 @@ export default function Airport(){
             setSelected(false) 
             break
             case 1:
-                setAirports(data.filter(
+                setAirports(getFlux.filter(
                     e => e.airport.charAt(0).toLowerCase() === input.toLowerCase()
                 || e.city.toLowerCase().includes(input.toLowerCase())
                 || e.icao.toLowerCase().includes(input.toLowerCase())))
                 setResult(true)
                 break
             default:
-                setAirports(data.filter(
+                setAirports(getFlux.filter(
                     e => e.airport.toLowerCase().includes(input.toLowerCase())
                 || e.city.toLowerCase().includes(input.toLowerCase())
                 || e.icao.toLowerCase().includes(input.toLowerCase())))
@@ -66,10 +92,10 @@ export default function Airport(){
         }
     })
 
-    const handleInput = e => searchAirports( e.target.value )
-    return (<div style={{outline: 'none', border: 0}}>
-        <h1>공항 검색창</h1>
-        
+    return (<>
+    <div class="title">공항검색</div>
+    <div style={{outline: 'none', border: 0}}>
+        {loading === false &&
             <div  style={{outline: 'none', border: 0}}>
                 <div style={{ width: '100%', display: 'block'}}>
                     <input
@@ -77,10 +103,11 @@ export default function Airport(){
                         style={{ width: '50%'}}
                         placeholder = "공항이름, 코드번호, 도시명으로 검색가능합니다"
                         className = "Search"
-                        onChange = { e => handleInput(e) }
+                        onChange={ e => handleInput(e)}
                     />
+                    <button onClick = { e => mySearch(e) }> 검색 </button>
                 </div>    
-            </div>
+            
             <div className="Gap"></div>
             <h5 style={{ marginTop: 10, marginBottom: 10, fontSize: 15,
                         color: '#f0ad4e', textAlign: 'center'}}>
@@ -89,6 +116,7 @@ export default function Airport(){
             </h5>
             {selected === true && 
                 <div className="Results">
+                    <div style={{ marginTop: 0, padding: 10}} onClick={() => selected(true)}>
                     <div style={{ width: '100%', display: 'block'}}>
                         <span style={{ fontWeight: 'bold' }}>{airport.city}</span>
                         <span style={{ float: 'right'}}>{airport.icao}</span>
@@ -96,21 +124,26 @@ export default function Airport(){
                     <p style={{ marginTop: 5, marginBottom: 0, paddingBottom: 5, color: '#777',
                 borderBottom: '0.5px solid #9997'}}>{airport.name}</p>
                 </div>
+             </div>
             }
-            {selected === false && resultAvailable === true 
-                && airports.map((item, i) =>  (<div className="Results">
-                    <div style={{ width: '100%', display: 'block'}}>
-                        <span style={{ fontWeight: 'bold' }}>{airport.city}</span>
-                        <span style={{ float: 'right'}}>{airport.icao}</span>
+            {selected === false && resultAvailable === true && airports.map((item, i) =>  (
+                <div className="Results" key={i}>
+                    <div style={{ marginTop: 0, padding: 10 }} id="Select" onClick={()=>{
+                        selectAirport(item)}}>
+                        <div style={{ width: '100%', display: 'block'}}>
+                            <span style={{ fontWeight: 'bold' }}>{airport.city}</span>
+                            <span style={{ float: 'right'}}>{airport.icao}</span>
+                        </div>
+                        <p style={{ marginTop: 5, marginBottom: 0, paddingBottom: 5, color: '#777',
+                                    borderBottom: '0.5px solid #9997'}}>{airport.name}</p>
+                        </div>
+
                     </div>
-                    <p style={{ marginTop: 5, marginBottom: 0, paddingBottom: 5, color: '#777',
-                borderBottom: '0.5px solid #9997'}}>{airport.name}</p>
-                </div>)
-                )
-                
+                    ))
             }
-       
-      
-    </div>)
+    </div>
+    }
+    </div>
+    </>)
 }
 
