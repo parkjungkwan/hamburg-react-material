@@ -34,19 +34,18 @@ export default function Airport(){
         setAirport({airport: payload.name, city: payload.city, icao: payload.icao})
     }
     const dispatch = useDispatch()
-    const getFlux =  useSelector(state => airportReducer)
+    const getFlux =  useSelector(state => state.airportReducer)
     useEffect(() =>{
-        if(!getFlux){
+        if(getFlux.length == 0 ){
             alert(`1`)
             axios.get(`https://gist.githubusercontent.com/tdreyno/4278655/raw/7b0762c09b519f40397e4c3e100b097d861f5588/airports.json`)
             .then( response => {
                 alert(`2 카운트:  ${response.data.length}`)
                 dispatch(setFlux(response.data))
-                alert(`3 카운트:  ${getFlux.length}`)
+               
             }).catch(error => {throw error})
-        }
-        else{
-            
+        }else{
+            alert(`3 카운트:  ${getFlux.length}`)
             if(getFlux.length > 0){
                 changeTitle()
             }
@@ -56,16 +55,17 @@ export default function Airport(){
             }   
         }
         
-    },[])
+    })
     
-    let changeTitle = () => document.title  = `공항검색결과:   ${airport.airport}`
+    let changeTitle = () => document.title  = `공항검색결과:   ${airport.name}`
     let searchAirports = debounce(500, input => {
         alert(`searchAirports에 전달된 검색어 ${input}`)
 
         if(getFlux === undefined){
             alert(`getFlux is undefined`)
         }else{
-            alert(`getFlux is not undefined`)
+            alert(`서울에 위치한 공항 ${getFlux.length}`)
+
         }
         if(input.length < 0) alert(` Error `)
         
@@ -77,14 +77,14 @@ export default function Airport(){
             break
             case 1:
                 setAirports(getFlux.filter(
-                    e => e.airport.charAt(0).toLowerCase() === input.toLowerCase()
+                    e => e.name.charAt(0).toLowerCase() === input.toLowerCase()
                 || e.city.toLowerCase().includes(input.toLowerCase())
                 || e.icao.toLowerCase().includes(input.toLowerCase())))
                 setResult(true)
                 break
             default:
                 setAirports(getFlux.filter(
-                    e => e.airport.toLowerCase().includes(input.toLowerCase())
+                    e => e.name.toLowerCase().includes(input.toLowerCase())
                 || e.city.toLowerCase().includes(input.toLowerCase())
                 || e.icao.toLowerCase().includes(input.toLowerCase())))
                 setResult(true)
@@ -93,7 +93,7 @@ export default function Airport(){
     })
 
     return (<>
-    <div class="title">공항검색</div>
+    <div className="title">공항검색</div>
     <div style={{outline: 'none', border: 0}}>
         {loading === false &&
             <div  style={{outline: 'none', border: 0}}>
