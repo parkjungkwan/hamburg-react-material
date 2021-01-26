@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -57,8 +57,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const postAuth = data => dispatch =>{
+  alert(`로그인 정보 ${data.userid}, ${data.passwd}`)
+  axios.post("", data)
+  .then(res => {
+
+  })
+}
+
 export default function SignInSide() {
+  const [ userid, setUserid ] = useState('')
+  const [ passwd, setPasswd ] = useState('')
   const classes = useStyles();
+
+  const onClickLoginBtn = e => {
+    e.preventDefault()
+    postAuth({userid, passwd})
+
+  }
+  const onChangeUserid = e =>{
+    setUserid(e.target.value)
+  }
+  const onChangePasswd = e => {
+    setPasswd(e.target.value)
+  }
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -83,6 +105,7 @@ export default function SignInSide() {
               name="email"
               autoComplete="email"
               autoFocus
+              onChange={ onChangeUserid }
             />
             <TextField
               variant="outlined"
@@ -94,6 +117,7 @@ export default function SignInSide() {
               type="password"
               id="password"
               autoComplete="current-password"
+              onChange={ onChangePasswd }
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -105,6 +129,7 @@ export default function SignInSide() {
               variant="contained"
               color="primary"
               className={classes.submit}
+              onClick = {() => onClickLoginBtn()}
             >
               Sign In
             </Button>
