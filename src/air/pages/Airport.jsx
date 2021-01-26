@@ -4,7 +4,6 @@ import axios from 'axios'
 import { debounce } from 'throttle-debounce'
 
 
-
 export const getAirports = data => ({type: "FETCH_AIRPORT", payload: data})
 
 export const airportReducer = (state = [], action) => {
@@ -15,7 +14,7 @@ export const airportReducer = (state = [], action) => {
 }
 
 export const airportSearch = () => dispatch => {
-    axios.get(`https://raw.githubusercontent.com/mwgg/Airports/master/airports.json`)
+    axios.get(`https://gist.githubusercontent.com/tdreyno/4278655/raw/7b0762c09b519f40397e4c3e100b097d861f5588/airports.json`)
     .then( response => {
         dispatch(getAirports(response.data))
     }).catch(error => {throw error})
@@ -41,6 +40,7 @@ export default function Airport(){
     let fetched = () => setLoading(false)
     let changeTitle = () => document.title  = `공항검색결과: ${airport.airport}`
     let searchAirports = debounce(500, input => {
+        alert(`searchAirports가 작동함, 입력한 값은  ${input}`)
         let data = results.data
         if(input.length < 0) alert(` Error `)
         switch (input.length){
@@ -81,6 +81,34 @@ export default function Airport(){
                     />
                 </div>    
             </div>
+            <div className="Gap"></div>
+            <h5 style={{ marginTop: 10, marginBottom: 10, fontSize: 15,
+                        color: '#f0ad4e', textAlign: 'center'}}>
+                {resultAvailable === true && "검색 결과"}   
+                {selected === true && "조회된 공항 목록"}         
+            </h5>
+            {selected === true && 
+                <div className="Results">
+                    <div style={{ width: '100%', display: 'block'}}>
+                        <span style={{ fontWeight: 'bold' }}>{airport.city}</span>
+                        <span style={{ float: 'right'}}>{airport.icao}</span>
+                    </div>
+                    <p style={{ marginTop: 5, marginBottom: 0, paddingBottom: 5, color: '#777',
+                borderBottom: '0.5px solid #9997'}}>{airport.name}</p>
+                </div>
+            }
+            {selected === false && resultAvailable === true 
+                && airports.map((item, i) =>  (<div className="Results">
+                    <div style={{ width: '100%', display: 'block'}}>
+                        <span style={{ fontWeight: 'bold' }}>{airport.city}</span>
+                        <span style={{ float: 'right'}}>{airport.icao}</span>
+                    </div>
+                    <p style={{ marginTop: 5, marginBottom: 0, paddingBottom: 5, color: '#777',
+                borderBottom: '0.5px solid #9997'}}>{airport.name}</p>
+                </div>)
+                )
+                
+            }
        
       
     </div>)
