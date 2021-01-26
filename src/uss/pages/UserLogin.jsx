@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux'
+import { debounce } from 'throttle-debounce'
+import axios from 'axios' 
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -57,22 +60,43 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const postAuth = data => dispatch =>{
-  alert(`로그인 정보 ${data.userid}, ${data.passwd}`)
-  axios.post("", data)
-  .then(res => {
 
-  })
+const POST_AUTH = '/studnet/POST_AUTH'
+const authAction = data => ({type: POST_AUTH, payload: data})
+export default function authReducer( state = {}, action){
+  switch (action.type){
+    case POST_AUTH : return action.payload
+    default: return state
+  }
 }
 
-export default function SignInSide() {
+const postAuth = data => dispatch =>{
+  alert(`로그인 정보 ${data.userid}, ${data.passwd}`)
+  axios.post(`/students/login`, data)
+  .then(res => {
+      if(res.data.message === `SUCCESS`){
+        sessionStorage.setItem(`userid`, res.data.userid)
+        sessionStorage.setItem(`passwd`, res.data.passwd)
+        sessionStorage.setItem(`name`, res.data.name)
+      }
+      dispatch(authAction(res.data))
+  })
+  .catch(err => { throw(err) })
+}
+
+const test = data => {
+  alert(`로그인 정보 ${data.userid}, ${data.passwd}`)
+}
+
+export function UserLogin() {
   const [ userid, setUserid ] = useState('')
   const [ passwd, setPasswd ] = useState('')
   const classes = useStyles();
 
   const onClickLoginBtn = e => {
+    alert(`1`)
     e.preventDefault()
-    postAuth({userid, passwd})
+    test({userid, passwd})
 
   }
   const onChangeUserid = e =>{
@@ -94,7 +118,7 @@ export default function SignInSide() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <form className={classes.form} noValidate>
+          <form onSubmit={onClickLoginBtn} className={classes.form} noValidate>
             <TextField
               variant="outlined"
               margin="normal"
@@ -104,12 +128,14 @@ export default function SignInSide() {
               label="Email Address"
               name="email"
               autoComplete="email"
+              value = "pJMA"
               autoFocus
               onChange={ onChangeUserid }
             />
             <TextField
               variant="outlined"
               margin="normal"
+              value = "1"
               required
               fullWidth
               name="password"
@@ -129,7 +155,7 @@ export default function SignInSide() {
               variant="contained"
               color="primary"
               className={classes.submit}
-              onClick = {() => onClickLoginBtn()}
+             
             >
               Sign In
             </Button>
