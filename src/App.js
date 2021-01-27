@@ -10,18 +10,19 @@ import './App.css';
 /* import { Main } from './tst/pages' */
 import { Airport } from './air/pages/Airport'
 import { createStore, applyMiddleware  } from 'redux';
-
+import { airportReducer as a } from './air/pages/Airport'
 import { UserLogin } from './uss/pages/index'
 import { combineReducers } from "redux"
 import thunk from 'redux-thunk';
 import {Provider} from'react-redux'
 const rootReducer = combineReducers({
-  
+  a
 })
-
+const store = createStore(rootReducer, applyMiddleware(thunk))
+alert(`########### ${typeof(Array.isArray(store.getState()))}`)
 export default function App() {
   return (
-    <Provider store={createStore(rootReducer, applyMiddleware(thunk))}>
+    <Provider store={store}>
     <Airport/>
     </Provider>
   )

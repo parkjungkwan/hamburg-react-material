@@ -1,1 +1,1 @@
-export { default as Airport } from './Airport'
+export { Airport } from './Airport'
